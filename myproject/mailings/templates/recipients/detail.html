@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Детали получателя</h2>
+<ul>
+    <li>ID: {{ recipient.id }}</li>
+    <li>Email: {{ recipient.email }}</li>
+    <li>ФИО: {{ recipient.full_name }}</li>
+    <li>Комментарий: {{ recipient.comment }}</li>
+</ul>
+<a href="{% url 'recipient_list' %}">Назад к списку</a>
+{% endblock %}
