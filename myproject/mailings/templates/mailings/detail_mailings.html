@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Детали рассылки</title>
+</head>
+<body>
+<h1>Рассылка: {{ mailing.subject }}</h1>
+
+<p><strong>Статус:</strong> {{ mailing.status }}</p>
+<p><strong>Запланировано на:</strong> {{ mailing.scheduled_time }}</p>
+{% if mailing.start_time %}
+<p><strong>Начало:</strong> {{ mailing.start_time }}</p>
+{% endif %}
+{% if mailing.end_time %}
+<p><strong>Завершено:</strong> {{ mailing.end_time }}</p>
+{% endif %}
+
+<h2>Попытки отправки</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Время</th>
+            <th>Статус</th>
+            <th>Ответ сервера</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for attempt in attempts %}
+        <tr>
+            <td>{{ attempt.timestamp }}</td>
+            <td>{{ attempt.status }}</td>
+            <td>{{ attempt.server_response }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">Нет попыток отправки.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
+
+{% endblock %}

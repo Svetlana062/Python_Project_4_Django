@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать профиль{% endblock %}
+
+{% block content %}
+
+<h2>Редактировать профиль</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
+  <!-- Кнопка для просмотра профиля -->
+  <a class="btn btn-secondary mt-3" href="{% url 'view_profile' %}">Посмотреть профиль</a>
+</form>
+
+{% endblock %}
