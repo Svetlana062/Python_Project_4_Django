@@ -8,5 +8,5 @@
     <li>ФИО: {{ recipient.full_name }}</li>
     <li>Комментарий: {{ recipient.comment }}</li>
 </ul>
-<a href="{% url 'recipient_list' %}">Назад к списку</a>
+<a class="p-2 btn btn-outline-primary me-2" href="{% url 'recipient_list' %}">Назад к списку</a>
 {% endblock %}

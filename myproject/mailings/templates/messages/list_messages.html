@@ -21,7 +21,7 @@
             <td>
                 <a class="p-2 btn btn-outline-primary me-2" href="{% url 'message_detail' message.id %}">Просмотр</a> |
                 <a class="p-2 btn btn-primary me-2" href="{% url 'message_edit' message.id %}">Редактировать</a> |
-                <a class="p-2 btn btn-danger" href="{% url 'message_delete' message.id %}">Удалить</a>
+                <a class="p-2 btn btn-danger" href="{% url 'mailing_delete' message.id %}">Удалить</a>
             </td>
         </tr>
         {% empty %}

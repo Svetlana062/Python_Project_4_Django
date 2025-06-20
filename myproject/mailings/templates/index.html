@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Статистика</h1>
-<ul class="list-group">
-  <li class="list-group-item">Всего рассылок: {{ total_mailings }}</li>
-  <li class="list-group-item">Активных рассылок: {{ active_mailings }}</li>
-  <li class="list-group-item">Уникальных получателей: {{ total_recipients }}</li>
-</ul>
+<div class="card mb-4" style="max-width: 600px;">
+  <div class="card-body">
+    <h5 class="card-title">Общая статистика</h5>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Всего рассылок: {{ total_mailings }}</li>
+      <li class="list-group-item">Активных рассылок: {{ active_mailings }}</li>
+      <li class="list-group-item">Уникальных получателей: {{ total_recipients }}</li>
+    </ul>
+  </div>
+</div>
 {% endblock %}
