@@ -5,8 +5,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('mailings.urls')), # подключение URL-ов приложения mailings
-    path('accounts/', include('accounts.urls')), # подключение URL-ов приложения accounts
+    path('', include('mailings.urls')),  # подключение URL-ов приложения mailings
+    path('accounts/', include('accounts.urls')),  # подключение URL-ов приложения accounts
 
 ]
 

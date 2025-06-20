@@ -1,9 +1,7 @@
-import datetime
-
 from django.shortcuts import render, redirect
 
 from .forms import MailingForm
-from .models import Mailing, Recipient, Message, MailingAttempt
+from .models import Mailing, Message, MailingAttempt
 from django.views.generic import (
     ListView,
     CreateView,
@@ -19,6 +17,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from . import utils
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -26,7 +25,12 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 
+# Определим ключ кеша
+CACHE_KEY_MAILING_LIST = 'mailing_list_cache'
+
+
 def my_view(request):
+    """Функция кеширования."""
     # Попытка получить данные из кеша
     data = cache.get('my_key')
 
@@ -39,6 +43,7 @@ def my_view(request):
     return HttpResponse(data)
 
 
+@login_required
 def index(request):
     """Главная страница."""
     total_mailings = Mailing.objects.count()
@@ -54,7 +59,7 @@ def index(request):
 
 
 # CRUD для Recipient
-@method_decorator(cache_page(60*15), name='dispatch')
+@method_decorator(cache_page(60*15, key_prefix=CACHE_KEY_MAILING_LIST), name='dispatch')
 class RecipientListView(LoginRequiredMixin, ListView):
     """Список получателей."""
     model = Recipient
@@ -64,6 +69,7 @@ class RecipientListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # фильтруем по текущему пользователю (owner)
         return Recipient.objects.filter(owner=self.request.user)
+
 
 class RecipientCreateView(LoginRequiredMixin, CreateView):
     """Создание нового получателя."""
@@ -108,8 +114,8 @@ class RecipientDetailView(LoginRequiredMixin, DetailView):
 
 
 # CRUD для Message
-@method_decorator(cache_page(60*15), name='dispatch')
-class MessageListView(ListView):
+@method_decorator(cache_page(60*15, key_prefix=CACHE_KEY_MAILING_LIST), name='dispatch')
+class MessageListView(LoginRequiredMixin, ListView):
     """Список сообщений."""
     model = Message
     template_name = 'messages/list_messages.html' # путь к шаблону
@@ -163,7 +169,7 @@ class MessageDetailView(LoginRequiredMixin, DetailView):
 
 
 # CRUD для Mailing
-@method_decorator(cache_page(60*15), name='dispatch')
+@method_decorator(cache_page(60*15, key_prefix=CACHE_KEY_MAILING_LIST), name='dispatch')
 class MailingListView(LoginRequiredMixin, ListView):
     """Просмотр списка рассылок."""
     model = Mailing
@@ -178,13 +184,14 @@ class MailingListView(LoginRequiredMixin, ListView):
 class MailingCreateView(LoginRequiredMixin, CreateView):
     """Создание рассылки."""
     model = Mailing
-    fields = ['name', 'status']
+    fields = ['name', 'status','message','recipients']
     template_name = 'mailings/form_mailing.html'
     success_url = reverse_lazy('mailing_list')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
 
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     """Обновление существующей рассылки."""
@@ -210,7 +217,7 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
 class MailingDetailView(LoginRequiredMixin, DetailView):
     """Просмотр деталей рассылки."""
     model = Mailing
-    template_name = 'mailings/detail_mailing.html'
+    template_name = 'mailings/detail_mailings.html'
     context_object_name = 'mailing'
 
     def get_queryset(self):
@@ -219,13 +226,13 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
 
 # Страница попыток рассылки (может быть отдельной или внутри рассылки)
 class MailingAttemptListView(ListView):
-    model = Mailing
+    model = MailingAttempt
     template_name = 'mailings/mailing_attempts.html'
     context_object_name = 'attempts'
 
     def get_queryset(self):
         mailing_id = self.kwargs.get('pk')
-        return MailingAttempt.objects.filter(mailing_id=mailing_id).order_by('-timestamp')
+        return MailingAttempt.objects.filter(mailing_id=mailing_id).order_by('-attempt_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -249,14 +256,22 @@ def send_mailing(request, pk):
     mailing.status = 'Завершена'
     mailing.end_time = timezone.now()
     mailing.save()
-    return HttpResponseRedirect(reverse('mailing_detail', args=[pk]))
+    return HttpResponseRedirect(reverse('detail_mailing', args=[pk]))
+
 
 def create_mailing(request):
     if request.method == 'POST':
         form = MailingForm(request.POST)
         if form.is_valid():
-            mailing = form.save()
-            # Можно перенаправить на страницу деталей или обратно к списку
+            mailing = form.save(commit=False)
+            mailing.owner = request.user # устанавливает владельца
+            mailing.save()  # сохраняем перед редактированием ManyToMany
+            form.save_m2m() # сохраняем связи с recipients
+
+            # Очистка кеша после создания новой рассылки
+            cache.delete(CACHE_KEY_MAILING_LIST)
+
+            # Перенаправление на страницу деталей
             return redirect('detail_mailing', mailing.id)
     else:
         form = MailingForm()

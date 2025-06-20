@@ -29,8 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mailings', # приложение для рассылок
-    'accounts', # приложение для регистрации пользователей
+    'mailings',  # приложение для рассылок
+    'accounts',  # приложение для регистрации пользователей
     'django_apscheduler',  # библиотека для автоматической отправки
 ]
 
@@ -134,7 +134,7 @@ LOGOUT_REDIRECT_URL = '/'
 # Настройки почты (для отправки писем)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.rambler.ru'  # используемый SMTP сервер
-EMAIL_PORT = 465
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -143,7 +143,10 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 # Кеширование. Используем Redis в качестве кеша
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache', # использование бэкенда, который предоставляет Django
-        'LOCATION': 'redis://127.0.0.1:6379/1', # расположение Redis-сервера.
+        'BACKEND': 'django_redis.cache.RedisCache',  # правильный путь для django-redis
+        'LOCATION': 'redis://127.0.0.1:6379/1',     # расположение Redis-сервера
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }

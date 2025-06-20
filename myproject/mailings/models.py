@@ -47,7 +47,7 @@ class Mailing(models.Model):
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Создана')
-    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    message = models.ForeignKey('Message', on_delete=models.CASCADE)
     recipients = models.ManyToManyField(Recipient)
     is_active = models.BooleanField(default=True, verbose_name='Активна')
     owner = models.ForeignKey(
