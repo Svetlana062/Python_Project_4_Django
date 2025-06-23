@@ -58,6 +58,9 @@ class Mailing(models.Model):
         related_name='mailings'
     )
 
+    # добавляем поле для запланированной отправки
+    scheduled_time = models.DateTimeField(null=True, blank=True, help_text='Время запланированной отправки')
+
     def __str__(self):
         return f"Mailing #{self.id} - {self.status}"
 

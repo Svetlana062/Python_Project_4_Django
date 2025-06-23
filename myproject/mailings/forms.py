@@ -8,8 +8,10 @@ class MailingForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
-            'messages': forms.Select(attrs={'class': 'form-control'}),
-            'recipient': forms.SelectMultiple(attrs={'class': 'form-control'})
+            'message': forms.Select(attrs={'class': 'form-control'}),
+            'recipient': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'scheduled_time': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'})
+
         }
 
 
