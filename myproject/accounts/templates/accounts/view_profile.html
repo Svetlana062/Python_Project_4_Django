@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<h2>Профиль пользователя</h2>
+
+<div class="card" style="max-width: 600px;">
+  <div class="card-body">
+    <!-- Аватар -->
+    {% if user.avatar %}
+      <img src="{{ user.avatar.url }}" alt="Аватар" class="img-thumbnail mb-3" style="max-width:200px; height:auto;">
+    {% else %}
+      <p>Аватар не установлен.</p>
+    {% endif %}
+
+    <!-- Имя -->
+    <p><strong>Имя:</strong> {{ user.get_full_name|default:"Не указано" }}</p>
+    <!-- Email -->
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <!-- Телефон -->
+    <p><strong>Телефон:</strong> {{ user.phone_number|default:"Не указано" }}</p>
+    <!-- Страна -->
+    <p><strong>Страна:</strong> {{ user.country|default:"Не указана" }}</p>
+  </div>
+</div>
+
+<!-- Кнопки -->
+<a href="{% url 'profile' %}" class="btn btn-primary mt-3">Редактировать профиль</a>
+<a href="{% url 'index' %}" class="btn btn-secondary mt-3">На главную</a>
+
+{% endblock %}

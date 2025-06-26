@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Создать рассылку{% endblock %}
+
+{% block content %}
+<h2>Создать новую рассылку</h2>
+
+<form method="post" id="mailingForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <label for="send_option">Отправить:</label>
+    <select id="send_option" name="send_option">
+        <option value="now">Сейчас</option>
+        <option value="schedule">Запланировать</option>
+    </select>
+
+    <div id="schedule_time_container" style="display:none;">
+        <label for="scheduled_time">Выберите время:</label>
+        <input type="datetime-local" id="scheduled_time" name="scheduled_time">
+    </div>
+
+    <button type="submit">Создать</button>
+</form>
+
+<a href="{% url 'mailing_list' %}">Назад к списку рассылок</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sendOption = document.getElementById('send_option');
+    const scheduleContainer = document.getElementById('schedule_time_container');
+
+    function toggleSchedule() {
+        if (sendOption.value === 'schedule') {
+            scheduleContainer.style.display = 'block';
+        } else {
+            scheduleContainer.style.display = 'none';
+        }
+    }
+
+    sendOption.addEventListener('change', toggleSchedule);
+    toggleSchedule(); // Изначально скрывать или показывать
+});
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5>
+    <!-- Навигация -->
+    <nav class="ms-3 d-flex align-items-center">
+        <!-- Основные ссылки -->
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'index' %}">Главная</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'recipient_list' %}">Клиенты</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'list_messages' %}">Сообщения</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'mailing_list' %}">Рассылки</a>
+
+        <!-- Кнопки входа/выхода -->
+        {% if user.is_authenticated %}
+            <!-- Профиль -->
+            <a class="p-2 btn btn-primary me-2" href="{% url 'view_profile' %}">Профиль</a>
+
+            <!-- Выход через POST -->
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit"
+                        class="p-2 btn btn-outline-secondary"
+                        style="
+                            background-color: #6c757d;
+                            color: #fff;
+                            padding: 0.375rem 0.75rem;
+                            border-radius: 0.25rem;
+                            border:none;"
+                        onmouseover="this.style.backgroundColor='#5a6268';"
+                        onmouseout="this.style.backgroundColor='#6c757d';">
+                    Выход
+                </button>
+            </form>
+        {% else %}
+            <!-- Войти -->
+            <a class="p-2 btn btn-outline-primary ms-2" href="{% url 'login' %}">Войти в профиль</a>
+        {% endif %}
+    </nav>
+</div>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ message.subject }}{% endblock %}
+
+{% block content %}
+<h2>{{ message.subject }}</h2>
+<pre>{{ message.body|safe }}</pre>
+
+<!-- Ссылка назад к списку -->
+<a class="btn btn-outline-primary" href="{% url 'list_messages' %}">К списку сообщений</a>
+
+<!-- Кнопки "Редактировать" и "Удалить" -->
+<a class="btn btn-primary" href="{% url 'message_edit' message.id %}">Редактировать</a>
+<a class="btn btn-danger" href="{% url 'message_delete' message.id %}">Удалить</a>
+
+{% endblock %}
